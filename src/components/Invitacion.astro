@@ -1,0 +1,151 @@
+---
+// src/components/Invitacion.astro
+// El cuerpo completo de la invitación, en un solo lugar y en orden.
+import Portada from "./Portada.astro";
+import NombresFlores from "./NombresFlores.astro";
+import FechaCumple from "./FechaCumple.astro";
+import Direccion from "./Direccion.astro";
+import Despedida from "./Despedida.astro";
+import Calendario from "./Calendario.astro";
+import BotonMusica from "./BotonMusica.astro";
+
+/*
+   Cuántos lugares reserva esta invitación. Lo manda la página:
+   index.astro no le pasa nada y queda en 0; pase[cantidad].astro le pasa
+   el número de la URL (/pase1, /pase2...). Hoy ninguna sección lo usa,
+   queda listo para cuando se conecte el sistema de invitados.
+*/
+export interface Props {
+    pases?: number;
+}
+const { pases = 0 } = Astro.props;
+---
+
+<!-- PORTADA (cubre todo hasta que se toca el sobre) -->
+<Portada />
+
+<!-- CONTENIDO DE LA INVITACIÓN -->
+<div id="contenido-principal" data-pases={pases}>
+    <NombresFlores />
+    <FechaCumple />
+    <Calendario />
+    <Direccion />
+    <Despedida />
+</div>
+
+<!-- El control flotante de la esquina: pausa y reanuda la melodía -->
+<BotonMusica />
+
+<style is:global>
+    /*
+       Entradas al hacer scroll. Cada elemento marcado con data-entra se
+       mueve con las propiedades "translate" y "scale" (no con transform):
+       así no pisa los transform propios de cada componente, como los
+       animales dados vuelta o el pajarito que se balancea.
+    */
+    [data-entra] {
+        translate: var(--entra-x, 0px) var(--entra-y, 0px);
+        scale: var(--entra-s, 1);
+    }
+</style>
+
+<script>
+    /*
+       Animación de entrada de todas las secciones menos la portada y
+       NombresFlores (esa tiene la suya, que arranca al abrir el sobre).
+
+       Cada elemento dice de dónde llega con data-entra:
+         izq / der            textos que entran desde ese costado
+         animal-izq / -der    animales y flores: entran desde más lejos
+         abajo / arriba       suben o bajan hasta su lugar
+         zoom                 crecen suave desde un poco más chicos
+         pop                  aparecen con un rebotito
+
+       Se anima cuando el elemento entra en pantalla al bajar. Si se sube
+       y queda otra vez por debajo, vuelve a esconderse, así la entrada se
+       repite cada vez que se baja.
+    */
+    import { gsap } from "gsap";
+    import { ScrollTrigger } from "gsap/ScrollTrigger";
+
+    gsap.registerPlugin(ScrollTrigger);
+
+    /*
+       Recorridos cortos y suaves: lo elegante es que cada cosa se deslice
+       poco y aparezca despacio, no que viaje lejos.
+    */
+    const inicio: Record<string, gsap.TweenVars> = {
+        izq: { "--entra-x": "-36px" },
+        der: { "--entra-x": "36px" },
+        "animal-izq": { "--entra-x": "-80px" },
+        "animal-der": { "--entra-x": "80px" },
+        abajo: { "--entra-y": "30px" },
+        arriba: { "--entra-y": "-24px" },
+        zoom: { "--entra-s": 0.92 },
+        pop: { "--entra-s": 0.82 },
+    };
+    const final: gsap.TweenVars = {
+        "--entra-x": "0px",
+        "--entra-y": "0px",
+        "--entra-s": 1,
+        autoAlpha: 1,
+    };
+
+    const esconder = (el: HTMLElement) =>
+        gsap.set(el, { autoAlpha: 0, ...inicio[el.dataset.entra || ""] });
+
+    function preparar() {
+        const elementos = gsap.utils.toArray<HTMLElement>("[data-entra]");
+        if (!elementos.length) return;
+
+        elementos.forEach(esconder);
+
+        ScrollTrigger.batch(elementos, {
+            /*
+               Arranca apenas el elemento asoma 40px por abajo de la
+               pantalla. Con un punto más alto (antes 90%), lo que está al
+               final de la página, como las hojas de la despedida, nunca
+               llegaba a esa altura y se quedaba invisible.
+            */
+            start: "top bottom-=40",
+            // Los que entran juntos llegan uno detrás de otro, en orden
+            onEnter: (lote) =>
+                (lote as HTMLElement[]).forEach((el, i) => {
+                    const tipo = el.dataset.entra || "";
+                    gsap.to(el, {
+                        ...final,
+                        duration: tipo.startsWith("animal") ? 2 : 1.6,
+                        delay: i * 0.22,
+                        // Arranque suave y frenado largo, sin rebotes
+                        ease: tipo === "pop" ? "back.out(1.1)" : "power2.out",
+                        overwrite: true,
+                    });
+                }),
+            onLeaveBack: (lote) =>
+                (lote as HTMLElement[]).forEach((el) => {
+                    gsap.killTweensOf(el);
+                    esconder(el);
+                }),
+        });
+    }
+
+    document.addEventListener("DOMContentLoaded", () => {
+        if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+
+        /*
+           Con portada, se prepara recién cuando se abre el sobre: antes,
+           lo que estuviera "en pantalla" detrás del sobre se animaría sin
+           que nadie lo vea.
+        */
+        const hayPortada = !!document.getElementById("portada-section");
+        if ((window as any).portadaAbierta || !hayPortada) {
+            preparar();
+        } else {
+            window.addEventListener(
+                "portada-abierta",
+                () => requestAnimationFrame(preparar),
+                { once: true },
+            );
+        }
+    });
+</script>

@@ -1,0 +1,348 @@
+---
+// src/components/FechaCumple.astro
+// Fecha del cumpleaños, debajo del nombre. Solo la fecha: el calendario
+// del mes va aparte, en otro componente.
+// Tarjeta crema con borde dorado, manzana arriba, el día en grande entre
+// el nombre del día y el mes, y un adorno dorado. Flores a los costados.
+//
+// Imágenes:
+//   /imagenes/florcostado.webp   rama de lirios. Nace del lado izquierdo; a la
+//                                derecha se usa espejada.
+//   /imagenes/ciervo.webp        ciervito abajo a la izquierda de la tarjeta
+// Letras (en /fonts/, las mismas de NombresFlores):
+//   dancing-script-600.woff2   título y "Te esperamos el"
+//   cinzel-600.woff2           día, mes y año
+
+// ── DATOS EDITABLES ───────────────────────────────────────────
+const titulo = "¡Ven a celebrar conmigo!";
+const intro = "Te esperamos el";
+const fechaIso = "2026-11-16"; // año-mes-día
+// ──────────────────────────────────────────────────────────────
+
+const dias = ["Domingo", "Lunes", "Martes", "Miércoles", "Jueves", "Viernes", "Sábado"];
+const meses = [
+    "Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio",
+    "Julio", "Agosto", "Septiembre", "Octubre", "Noviembre", "Diciembre",
+];
+
+const [anio, mes, dia] = fechaIso.split("-").map(Number);
+// Fecha en UTC: así el día de la semana no cambia según el huso horario
+const nombreDia = dias[new Date(Date.UTC(anio, mes - 1, dia)).getUTCDay()];
+const nombreMes = meses[mes - 1];
+---
+
+<section id="fecha" class="seccion">
+    <!-- Flores a los costados -->
+    <img
+        src="/imagenes/florcostado.webp"
+        alt=""
+        width="257"
+        height="700"
+        class="flor flor-izq" data-entra="animal-izq"
+        aria-hidden="true"
+        loading="lazy"
+    />
+    <img
+        src="/imagenes/florcostado.webp"
+        alt=""
+        width="257"
+        height="700"
+        class="flor flor-der" data-entra="animal-der"
+        aria-hidden="true"
+        loading="lazy"
+    />
+
+    <h2 class="titulo" data-entra="izq">{titulo}</h2>
+
+    <div class="tarjeta" data-entra="abajo">
+        <!-- Manzana sobre el borde de arriba -->
+        <svg class="manzanita" data-entra="pop" viewBox="0 0 24 24" aria-hidden="true">
+            <path
+                fill="#c0161f"
+                d="M12 7.5c-1.6-1.3-5.8-1.6-6.9 2.3-1 3.6 1.3 9.6 4.3 10.6 1 .3 1.8-.2 2.6-.2s1.6.5 2.6.2c3-1 5.3-7 4.3-10.6C17.8 5.9 13.6 6.2 12 7.5z"
+            ></path>
+            <path
+                fill="none"
+                stroke="#6b3a1e"
+                stroke-width="1.3"
+                stroke-linecap="round"
+                d="M12 7.6c0-1.6.4-3 1.4-4.2"></path>
+            <path
+                fill="#4f8a2f"
+                d="M12.6 5.6c1.2-2 3.4-2.6 5.2-2-1 1.9-3 2.8-5.2 2z"></path>
+            <path
+                fill="#fff"
+                opacity=".5"
+                d="M7.6 10.4c.4-1.4 1.6-2 2.6-2-.9.6-1.6 1.6-1.8 3-.3.2-.9-.3-.8-1z"
+            ></path>
+        </svg>
+
+        <!-- Destellos dorados en las esquinas -->
+        <span class="destello d1" aria-hidden="true"></span>
+        <span class="destello d2" aria-hidden="true"></span>
+        <span class="destello d3" aria-hidden="true"></span>
+        <span class="destello d4" aria-hidden="true"></span>
+
+        <p class="intro" data-entra="der">{intro}</p>
+
+        <!-- Día de la semana | número | mes -->
+        <p class="dia-fila" aria-label={`${nombreDia} ${dia} de ${nombreMes} de ${anio}`}>
+            <span class="lado" data-entra="izq" aria-hidden="true">{nombreDia}</span>
+            <span class="numero" data-entra="pop" aria-hidden="true">{dia}</span>
+            <span class="lado" data-entra="der" aria-hidden="true">{nombreMes}</span>
+        </p>
+        <p class="anio" data-entra="abajo" aria-hidden="true">{anio}</p>
+
+        <!-- Adorno dorado con un corazón al medio -->
+        <svg class="adorno" data-entra="zoom" viewBox="0 0 240 24" aria-hidden="true">
+            <g
+                fill="none"
+                stroke="#d4a650"
+                stroke-width="1.4"
+                stroke-linecap="round"
+            >
+                <path d="M6 12 H92"></path>
+                <path d="M92 12 C100 12 102 5 96 5 C91 5 92 11 98 12"></path>
+                <path d="M234 12 H148"></path>
+                <path d="M148 12 C140 12 138 5 144 5 C149 5 148 11 142 12"></path>
+            </g>
+            <path
+                fill="#b3101d"
+                stroke="#e2b04a"
+                stroke-width="1"
+                d="M120 21s-8-4.9-10.2-10c-1.6-3.6.6-7.5 4.4-7.5 2.3 0 4 1.3 4.8 2.8.8-1.5 2.5-2.8 4.8-2.8 3.8 0 6 3.9 4.4 7.5C128 16.1 120 21 120 21z"
+            ></path>
+        </svg>
+
+        <!-- Ciervito asomado abajo a la izquierda, mirando a la derecha -->
+        <img
+            src="/imagenes/ciervo.webp"
+            alt=""
+            width="250"
+            height="420"
+            class="ciervo" data-entra="animal-izq"
+            aria-hidden="true"
+            loading="lazy"
+        />
+    </div>
+</section>
+
+<style>
+    @font-face {
+        font-family: "Dancing Script Sitio";
+        src: url("/fonts/dancing-script-600.woff2") format("woff2");
+        font-weight: 600;
+        font-display: swap;
+    }
+    @font-face {
+        font-family: "Cinzel";
+        src: url("/fonts/cinzel-600.woff2") format("woff2");
+        font-weight: 600;
+        font-display: swap;
+    }
+
+    /* Sin fondo propio: se ve el fondo principal del layout */
+    .seccion {
+        position: relative;
+        width: 100%;
+        overflow: hidden;
+        /* Arriba casi sin espacio: queda pegado a la sección del nombre */
+        padding: 0.4rem 13% 3rem;
+        box-sizing: border-box;
+        text-align: center;
+        color: #5a3414;
+    }
+
+    /* ── Flores ─────────────────────────────────────────────── */
+    .flor {
+        position: absolute;
+        top: 58%;
+        width: 26%;
+        max-width: 120px;
+        height: auto;
+        pointer-events: none;
+        user-select: none;
+        -webkit-user-drag: none;
+        filter: drop-shadow(0 4px 6px rgba(40, 60, 20, 0.25));
+    }
+    .flor-izq {
+        left: -3%;
+        transform: translateY(-50%);
+    }
+    .flor-der {
+        right: -3%;
+        transform: translateY(-50%) scaleX(-1);
+    }
+
+    /* ── Título ─────────────────────────────────────────────── */
+    .titulo {
+        position: relative;
+        margin: 0 0 1.5rem;
+        /* Misma letra que "Te esperamos el", rosa frutilla con borde
+           blanco (el trazo va detrás del relleno gracias a paint-order) */
+        font-family: "Dancing Script Sitio", "Great Vibes", cursive;
+        font-weight: 600;
+        font-size: clamp(1.8rem, 8.6vw, 2.2rem);
+        line-height: 1.15;
+        color: #d23b55;
+        -webkit-text-stroke: 0.14em #ffffff;
+        paint-order: stroke fill;
+        filter: drop-shadow(0 3px 4px rgba(150, 40, 60, 0.3));
+    }
+
+    /* ── Tarjeta ────────────────────────────────────────────── */
+    .tarjeta {
+        position: relative;
+        padding: 2rem 1rem 1.6rem;
+        border-radius: 22px;
+        background-image: linear-gradient(
+            180deg,
+            rgba(255, 252, 244, 0.94),
+            rgba(253, 245, 228, 0.94)
+        );
+        border: 2px solid #d4a650;
+        box-shadow:
+            inset 0 0 0 5px rgba(255, 252, 244, 0.9),
+            inset 0 0 0 6px rgba(212, 166, 80, 0.6),
+            0 10px 24px rgba(90, 50, 20, 0.18);
+    }
+
+    .manzanita {
+        position: absolute;
+        top: 0;
+        left: 50%;
+        width: 40px;
+        height: 40px;
+        transform: translate(-50%, -58%);
+        filter: drop-shadow(0 3px 4px rgba(120, 20, 20, 0.3));
+    }
+
+    /* Ciervito en la esquina de abajo a la izquierda, por encima de la
+       flor; la imagen ya mira a la derecha, hacia la tarjeta */
+    .ciervo {
+        position: absolute;
+        z-index: 2;
+        left: -1.6rem;
+        bottom: -1.8rem;
+        width: 4.6rem;
+        height: auto;
+        pointer-events: none;
+        user-select: none;
+        -webkit-user-drag: none;
+        filter: drop-shadow(0 5px 6px rgba(60, 40, 20, 0.25));
+    }
+
+    .destello {
+        position: absolute;
+        width: 12px;
+        height: 12px;
+        background-image: linear-gradient(#fff6d8, #e2b04a);
+        clip-path: polygon(
+            50% 0,
+            60% 40%,
+            100% 50%,
+            60% 60%,
+            50% 100%,
+            40% 60%,
+            0 50%,
+            40% 40%
+        );
+        animation: titilar 2.8s ease-in-out infinite;
+    }
+    .d1 {
+        top: 14px;
+        left: 14px;
+    }
+    .d2 {
+        top: 14px;
+        right: 14px;
+        animation-delay: -0.7s;
+    }
+    .d3 {
+        bottom: 14px;
+        left: 14px;
+        animation-delay: -1.4s;
+    }
+    .d4 {
+        bottom: 14px;
+        right: 14px;
+        animation-delay: -2.1s;
+    }
+    @keyframes titilar {
+        0%,
+        100% {
+            opacity: 0.35;
+            transform: scale(0.7);
+        }
+        50% {
+            opacity: 1;
+            transform: scale(1.15);
+        }
+    }
+
+    .intro {
+        margin: 0 0 0.6rem;
+        font-family: "Dancing Script Sitio", "Great Vibes", cursive;
+        font-weight: 600;
+        font-size: clamp(1.35rem, 6.4vw, 1.65rem);
+        line-height: 1.1;
+        color: #6b3a14;
+    }
+
+    .dia-fila {
+        display: grid;
+        grid-template-columns: 1fr auto 1fr;
+        align-items: center;
+        gap: 0.7rem;
+        margin: 0;
+    }
+    .lado {
+        padding: 0.4rem 0;
+        border-top: 1.5px solid #d4a650;
+        border-bottom: 1.5px solid #d4a650;
+        font-family: "Cinzel", serif;
+        font-weight: 600;
+        font-size: clamp(0.78rem, 3.7vw, 0.95rem);
+        letter-spacing: 0.08em;
+        color: #6b3a14;
+    }
+    .numero {
+        font-family: "Cinzel", serif;
+        font-weight: 600;
+        font-size: clamp(3.6rem, 18vw, 4.6rem);
+        line-height: 1;
+        background-image: linear-gradient(
+            180deg,
+            #d8303b 0%,
+            #a3121f 60%,
+            #7d0710 100%
+        );
+        -webkit-background-clip: text;
+        background-clip: text;
+        color: transparent;
+        filter: drop-shadow(0 2px 0 #f1c96a)
+            drop-shadow(0 4px 6px rgba(120, 20, 20, 0.2));
+    }
+    .anio {
+        margin: 0.35rem 0 0;
+        font-family: "Cinzel", serif;
+        font-weight: 600;
+        font-size: 0.95rem;
+        letter-spacing: 0.35em;
+        color: #b0843a;
+    }
+
+    .adorno {
+        display: block;
+        width: 80%;
+        max-width: 240px;
+        height: auto;
+        margin: 0.9rem auto 0;
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+        .destello {
+            animation: none;
+        }
+    }
+</style>

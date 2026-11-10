@@ -1,0 +1,399 @@
+---
+// src/components/Calendario.astro
+// Cuenta regresiva y, debajo, el calendario del mes con el día marcado.
+// Mismo estilo que FechaCumple: tarjetas crema con borde dorado, rojo
+// manzana y letras de cuento. Animalitos del bosque asomados en
+// distintos rincones de las tarjetas.
+//
+// Imágenes (webp comprimidos):
+//   /imagenes/carpintero.webp    arriba a la derecha de la cuenta
+//   /imagenes/ardillaploma.webp  abajo a la izquierda del calendario
+// Letras (en /fonts/, las mismas del resto):
+//   great-vibes.woff2, cinzel-600.woff2 (números y rótulos de la
+//   cuenta en Cormorant Garamond, que trae el layout)
+
+// ── DATOS EDITABLES ───────────────────────────────────────────
+const fechaIso = "2026-11-16"; // año-mes-día
+const hora = "16:00"; // la cuenta regresiva llega a cero a esta hora
+const tituloCuenta = "Cuenta regresiva";
+const textoFaltan = "¡Ya falta muy poquito!";
+const textoLlego = "¡Hoy es el gran día!";
+const tituloCalendario = "Noviembre";
+// ──────────────────────────────────────────────────────────────
+
+const [anio, mes, dia] = fechaIso.split("-").map(Number);
+
+// Calendario del mes, semanas de lunes a domingo
+const primerDia = new Date(Date.UTC(anio, mes - 1, 1)).getUTCDay();
+const vaciosAntes = (primerDia + 6) % 7;
+const diasDelMes = new Date(Date.UTC(anio, mes, 0)).getUTCDate();
+const casillas: (number | null)[] = [
+    ...Array.from({ length: vaciosAntes }, () => null),
+    ...Array.from({ length: diasDelMes }, (_, i) => i + 1),
+];
+const cabecera = ["Lu", "Ma", "Mi", "Ju", "Vi", "Sá", "Do"];
+
+// Fecha y hora del evento, sin zona horaria: se toma en la hora del
+// celular del invitado.
+const inicioIso = `${fechaIso}T${hora}:00`;
+
+const unidades = [
+    { u: "d", rotulo: "Días" },
+    { u: "h", rotulo: "Horas" },
+    { u: "m", rotulo: "Minutos" },
+    { u: "s", rotulo: "Segundos" },
+];
+---
+
+<section id="calendario" class="seccion">
+    <!-- ── CUENTA REGRESIVA ─────────────────────────────────── -->
+    <h2 class="titulo" data-entra="der">{tituloCuenta}</h2>
+
+    <div class="tarjeta tarjeta-cuenta" data-entra="abajo">
+        <img
+            src="/imagenes/carpintero.webp"
+            alt=""
+            width="219"
+            height="211"
+            class="animal carpintero" data-entra="animal-der"
+            aria-hidden="true"
+            loading="lazy"
+        />
+
+        <p class="faltan" data-entra="izq">{textoFaltan}</p>
+
+        <div class="cuenta" id="cal-cuenta" data-fecha={inicioIso}>
+            {
+                unidades.map((x) => (
+                    <div class="caja" data-entra="pop">
+                        <span class="num" data-u={x.u}>
+                            00
+                        </span>
+                        <span class="rotulo">{x.rotulo}</span>
+                    </div>
+                ))
+            }
+        </div>
+        <p class="llego" id="cal-llego" hidden>{textoLlego}</p>
+    </div>
+
+    <!-- ── CALENDARIO ───────────────────────────────────────── -->
+    <div class="tarjeta tarjeta-cal" data-entra="abajo">
+
+        <p class="cal-mes" data-entra="der">{tituloCalendario}</p>
+        <p class="cal-anio" data-entra="izq">{anio}</p>
+
+        <div class="cal-grilla" data-entra="zoom" aria-hidden="true">
+            {cabecera.map((c) => <span class="cal-cab">{c}</span>)}
+            {
+                casillas.map((n) =>
+                    n === null ? (
+                        <span />
+                    ) : (
+                        <span class:list={["cal-dia", { marcado: n === dia }]}>
+                            {n === dia && (
+                                <svg class="corazon" viewBox="0 0 24 24">
+                                    <path d="M12 21s-7.5-4.6-9.6-9.4C.9 8.2 3 4.5 6.6 4.5c2.2 0 3.7 1.2 4.5 2.6.8-1.4 2.3-2.6 4.5-2.6 3.6 0 5.7 3.7 4.2 7.1C19.5 16.4 12 21 12 21z" />
+                                </svg>
+                            )}
+                            <span class="cal-num">{n}</span>
+                        </span>
+                    ),
+                )
+            }
+        </div>
+
+        <img
+            src="/imagenes/ardillaploma.webp"
+            alt=""
+            width="289"
+            height="225"
+            class="animal ardillaploma" data-entra="animal-izq"
+            aria-hidden="true"
+            loading="lazy"
+        />
+    </div>
+</section>
+
+<style>
+    @font-face {
+        font-family: "Great Vibes Sitio";
+        src: url("/fonts/great-vibes.woff2") format("woff2");
+        font-weight: 400;
+        font-display: swap;
+    }
+    @font-face {
+        font-family: "Dancing Script Sitio";
+        src: url("/fonts/dancing-script-600.woff2") format("woff2");
+        font-weight: 600;
+        font-display: swap;
+    }
+    @font-face {
+        font-family: "Cinzel";
+        src: url("/fonts/cinzel-600.woff2") format("woff2");
+        font-weight: 600;
+        font-display: swap;
+    }
+
+    /* Sin fondo propio: se ve el fondo principal del layout */
+    .seccion {
+        position: relative;
+        width: 100%;
+        overflow: hidden;
+        padding: 2rem 9% 3.2rem;
+        box-sizing: border-box;
+        text-align: center;
+        color: #5a3414;
+    }
+
+    .titulo {
+        margin: 0 0 1.6rem;
+        /* Igual que el título de FechaCumple: rosa frutilla con borde
+           blanco (el trazo va detrás del relleno gracias a paint-order) */
+        font-family: "Dancing Script Sitio", "Great Vibes", cursive;
+        font-weight: 600;
+        font-size: clamp(1.8rem, 8.6vw, 2.2rem);
+        line-height: 1.15;
+        color: #d23b55;
+        -webkit-text-stroke: 0.14em #ffffff;
+        paint-order: stroke fill;
+        filter: drop-shadow(0 3px 4px rgba(150, 40, 60, 0.3));
+    }
+
+    /* ── Tarjetas ───────────────────────────────────────────── */
+    .tarjeta {
+        position: relative;
+        border-radius: 22px;
+        background-image: linear-gradient(
+            180deg,
+            rgba(255, 252, 244, 0.94),
+            rgba(253, 245, 228, 0.94)
+        );
+        border: 2px solid #d4a650;
+        box-shadow:
+            inset 0 0 0 5px rgba(255, 252, 244, 0.9),
+            inset 0 0 0 6px rgba(212, 166, 80, 0.6),
+            0 10px 24px rgba(90, 50, 20, 0.18);
+    }
+    .tarjeta-cuenta {
+        padding: 1.3rem 0.8rem 1.5rem;
+    }
+    .tarjeta-cal {
+        margin-top: 3.4rem;
+        padding: 1.5rem 1rem 1.6rem;
+    }
+
+    /* ── Animalitos asomados en los rincones ────────────────── */
+    .animal {
+        position: absolute;
+        z-index: 2;
+        height: auto;
+        pointer-events: none;
+        user-select: none;
+        -webkit-user-drag: none;
+        filter: drop-shadow(0 5px 6px rgba(60, 40, 20, 0.25));
+    }
+    .carpintero {
+        /* Posado sobre la esquina de arriba, mirando hacia el centro */
+        top: -2.6rem;
+        right: -1.8rem;
+        width: 4.2rem;
+        animation: balanceo 3.4s ease-in-out infinite;
+        transform-origin: bottom center;
+    }
+    .ardillaploma {
+        /* Abajo a la izquierda, mirando a la derecha (como viene la imagen) */
+        left: -1.2rem;
+        bottom: -1.8rem;
+        width: 4.8rem;
+    }
+    @keyframes balanceo {
+        0%,
+        100% {
+            transform: rotate(-3deg);
+        }
+        50% {
+            transform: rotate(4deg);
+        }
+    }
+
+    /* ── Cuenta regresiva ───────────────────────────────────── */
+    .faltan {
+        margin: 0 0 0.9rem;
+        font-family: "Cormorant Garamond", serif;
+        font-style: italic;
+        font-weight: 700;
+        font-size: clamp(1.3rem, 6vw, 1.55rem);
+        line-height: 1.1;
+        color: #6b3a14;
+    }
+    .cuenta {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 0.5rem;
+    }
+    .caja {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 0.35rem;
+    }
+    /* Cada número va en una "manzana": círculo rojo con aro dorado */
+    .num {
+        display: grid;
+        place-items: center;
+        width: 100%;
+        max-width: 3.9rem;
+        aspect-ratio: 1;
+        border-radius: 50%;
+        background-image: radial-gradient(
+            circle at 35% 30%,
+            #d8343e 0%,
+            #a3121f 60%,
+            #7d0710 100%
+        );
+        box-shadow:
+            0 0 0 2px #fbf4e6,
+            0 0 0 3.5px #d4a650,
+            0 5px 10px rgba(120, 20, 20, 0.25);
+        font-family: "Cormorant Garamond", serif;
+        font-weight: 700;
+        font-size: clamp(1.45rem, 7vw, 1.8rem);
+        line-height: 1;
+        color: #fbe9c0;
+        font-variant-numeric: lining-nums tabular-nums;
+    }
+    .rotulo {
+        font-family: "Cormorant Garamond", serif;
+        font-weight: 700;
+        font-size: clamp(0.85rem, 3.9vw, 1rem);
+        color: #8a5a24;
+    }
+    .llego {
+        margin: 0.4rem 0 0;
+        font-family: "Great Vibes Sitio", "Great Vibes", cursive;
+        font-size: 2rem;
+        color: #a3121f;
+    }
+
+    /* ── Calendario ─────────────────────────────────────────── */
+    .cal-mes {
+        margin: 0;
+        font-family: "Great Vibes Sitio", "Great Vibes", cursive;
+        font-size: clamp(2.2rem, 10vw, 2.7rem);
+        line-height: 1;
+        color: #a3121f;
+    }
+    .cal-anio {
+        margin: 0.15rem 0 0.8rem;
+        font-family: "Cinzel", serif;
+        font-weight: 600;
+        font-size: 0.85rem;
+        letter-spacing: 0.35em;
+        color: #b0843a;
+    }
+    .cal-grilla {
+        display: grid;
+        grid-template-columns: repeat(7, 1fr);
+        row-gap: 0.25rem;
+        max-width: 270px;
+        margin: 0 auto;
+        padding-top: 0.6rem;
+        border-top: 1px dashed rgba(212, 166, 80, 0.8);
+    }
+    .cal-cab {
+        padding-bottom: 0.25rem;
+        font-family: "Cinzel", serif;
+        font-weight: 600;
+        font-size: 0.68rem;
+        color: #b0843a;
+    }
+    .cal-dia {
+        position: relative;
+        display: grid;
+        place-items: center;
+        height: 2rem;
+        font-family: "Cormorant Garamond", serif;
+        font-weight: 600;
+        font-size: 1rem;
+        color: #5a3414;
+    }
+    .cal-num {
+        position: relative;
+    }
+    .cal-dia.marcado {
+        color: #ffffff;
+        font-weight: 700;
+    }
+    .corazon {
+        position: absolute;
+        left: 50%;
+        top: 50%;
+        width: 2.4rem;
+        height: 2.4rem;
+        transform: translate(-50%, -48%);
+        fill: #b3101d;
+        stroke: #e2b04a;
+        stroke-width: 1;
+        filter: drop-shadow(0 2px 3px rgba(120, 20, 20, 0.35));
+        animation: latido 1.6s ease-in-out infinite;
+    }
+    @keyframes latido {
+        0%,
+        100% {
+            transform: translate(-50%, -48%) scale(1);
+        }
+        50% {
+            transform: translate(-50%, -48%) scale(1.1);
+        }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+        .carpintero,
+        .corazon {
+            animation: none;
+        }
+    }
+</style>
+
+<script>
+    document.addEventListener("DOMContentLoaded", () => {
+        const cuenta = document.getElementById("cal-cuenta");
+        const llego = document.getElementById("cal-llego");
+        if (!cuenta) return;
+
+        const objetivo = new Date(cuenta.dataset.fecha || "").getTime();
+        if (isNaN(objetivo)) return;
+
+        const campos: Record<string, HTMLElement | null> = {
+            d: cuenta.querySelector('[data-u="d"]'),
+            h: cuenta.querySelector('[data-u="h"]'),
+            m: cuenta.querySelector('[data-u="m"]'),
+            s: cuenta.querySelector('[data-u="s"]'),
+        };
+        const dos = (n: number) => String(n).padStart(2, "0");
+
+        let reloj = 0;
+        const pintar = () => {
+            const resta = Math.max(0, objetivo - Date.now());
+            const seg = Math.floor(resta / 1000);
+            const valores = {
+                d: Math.floor(seg / 86400),
+                h: Math.floor((seg % 86400) / 3600),
+                m: Math.floor((seg % 3600) / 60),
+                s: seg % 60,
+            };
+            for (const k of ["d", "h", "m", "s"] as const) {
+                const el = campos[k];
+                if (el) el.textContent = dos(valores[k]);
+            }
+            if (resta === 0) {
+                clearInterval(reloj);
+                if (llego) llego.hidden = false;
+            }
+        };
+
+        pintar();
+        reloj = window.setInterval(pintar, 1000);
+    });
+</script>

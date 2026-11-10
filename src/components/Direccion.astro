@@ -1,0 +1,323 @@
+---
+// src/components/Direccion.astro
+// Dónde es la fiesta. En este orden: el título "Recepción", el logo del
+// local, la dirección, el horario y el botón que abre Google Maps.
+// Marco infantil con los colores de Blancanieves: banderines rojo,
+// amarillo y azul arriba, borde blanco con aro rojo y una línea de
+// puntitos, fondo crema con lunares suaves. Lirios a los costados y el
+// ciervito asomado abajo a la derecha.
+//
+// Imágenes:
+//   /imagenes/logolocal.webp     logo del local
+//   /imagenes/florcostado.webp   lirios; a la derecha va espejado
+//   /imagenes/ciervo.webp        ciervito abajo a la derecha (espejado,
+//                                para que mire a la izquierda)
+// Letras (en /fonts/, las mismas del resto):
+//   dancing-script-600.woff2   título
+//   cinzel-600.woff2           horario y botón
+
+// ── DATOS EDITABLES ───────────────────────────────────────────
+const titulo = "Recepción";
+const nombreLocal = "BoomPark";
+const direccion = [
+    "Av. Brasil, 3er anillo",
+    "Ingreso Feria Barrio Lindo",
+    "Mega Centro Comercial Avenida Brasil, 1er piso",
+];
+const horaInicio = "16:00";
+const horaFin = "18:00";
+const textoBoton = "Ver ubicación";
+const enlaceMapa = "https://maps.app.goo.gl/i3wge5cnfXjuXhnm8";
+// ──────────────────────────────────────────────────────────────
+
+// Banderines: se repiten rojo, amarillo y azul (los colores del vestido)
+const colores = ["#d8303b", "#f4c534", "#3d73c9"];
+const banderines = Array.from({ length: 9 }, (_, i) => {
+    const x = 14 + i * 26.5;
+    // La cuerda baja en curva: más abajo al centro
+    const y = 8 + Math.sin((i / 8) * Math.PI) * 10;
+    return { x, y, color: colores[i % 3] };
+});
+---
+
+<section id="direccion" class="seccion">
+    <!-- Flores a los costados -->
+    <img
+        src="/imagenes/florcostado.webp"
+        alt=""
+        width="257"
+        height="700"
+        class="flor flor-izq" data-entra="animal-izq"
+        aria-hidden="true"
+        loading="lazy"
+    />
+    <img
+        src="/imagenes/florcostado.webp"
+        alt=""
+        width="257"
+        height="700"
+        class="flor flor-der" data-entra="animal-der"
+        aria-hidden="true"
+        loading="lazy"
+    />
+
+    <h2 class="titulo" data-entra="izq">{titulo}</h2>
+
+    <div class="tarjeta" data-entra="abajo">
+        <!-- Banderines colgando del borde de arriba -->
+        <svg class="banderines" data-entra="arriba" viewBox="0 0 240 40" aria-hidden="true">
+            <path
+                d="M2 6 Q120 30 238 6"
+                fill="none"
+                stroke="#b0843a"
+                stroke-width="1.4"></path>
+            {
+                banderines.map((b) => (
+                    <path
+                        d={`M${b.x - 9} ${b.y} L${b.x + 9} ${b.y} L${b.x} ${b.y + 17} Z`}
+                        fill={b.color}
+                        stroke="#ffffff"
+                        stroke-width="1.2"
+                        stroke-linejoin="round"
+                    />
+                ))
+            }
+        </svg>
+
+        <!-- Logo del local -->
+        <img
+            src="/imagenes/logolocal.webp"
+            alt={nombreLocal}
+            width="600"
+            height="225"
+            class="logo" data-entra="pop"
+            loading="lazy"
+        />
+
+        <!-- Dirección, centrada -->
+        <p class="direccion" data-entra="der">
+            {
+                direccion.map((linea, i) => (
+                    <>
+                        {i > 0 && <br />}
+                        {linea}
+                    </>
+                ))
+            }
+        </p>
+
+        <!-- Separador de puntitos de colores -->
+        <div class="puntos" data-entra="zoom" aria-hidden="true">
+            <span></span><span></span><span></span><span></span><span></span>
+        </div>
+
+        <!-- Horario -->
+        <p class="hora" data-entra="izq">De {horaInicio} a {horaFin} hs</p>
+
+        <!-- Botón a Google Maps -->
+        <a class="boton" data-entra="pop" href={enlaceMapa} target="_blank" rel="noopener">
+            {textoBoton}
+        </a>
+
+        <!-- Ciervito asomado abajo a la derecha, mirando a la izquierda -->
+        <img
+            src="/imagenes/ciervo.webp"
+            alt=""
+            width="250"
+            height="420"
+            class="ciervo" data-entra="animal-der"
+            aria-hidden="true"
+            loading="lazy"
+        />
+    </div>
+</section>
+
+<style>
+    @font-face {
+        font-family: "Dancing Script Sitio";
+        src: url("/fonts/dancing-script-600.woff2") format("woff2");
+        font-weight: 600;
+        font-display: swap;
+    }
+    @font-face {
+        font-family: "Cinzel";
+        src: url("/fonts/cinzel-600.woff2") format("woff2");
+        font-weight: 600;
+        font-display: swap;
+    }
+
+    /* Sin fondo propio: se ve el fondo principal del layout */
+    .seccion {
+        position: relative;
+        width: 100%;
+        overflow: hidden;
+        padding: 1.6rem 10% 3.4rem;
+        box-sizing: border-box;
+        text-align: center;
+        color: #5a3414;
+    }
+
+    /* ── Flores ─────────────────────────────────────────────── */
+    .flor {
+        position: absolute;
+        top: 56%;
+        width: 26%;
+        max-width: 120px;
+        height: auto;
+        pointer-events: none;
+        user-select: none;
+        -webkit-user-drag: none;
+        filter: drop-shadow(0 4px 6px rgba(40, 60, 20, 0.25));
+    }
+    .flor-izq {
+        left: -5%;
+        transform: translateY(-50%);
+    }
+    .flor-der {
+        right: -5%;
+        transform: translateY(-50%) scaleX(-1);
+    }
+
+    /* ── Título (igual que los de Fecha y Cuenta regresiva) ─── */
+    .titulo {
+        position: relative;
+        margin: 0 0 1.2rem;
+        font-family: "Dancing Script Sitio", "Great Vibes", cursive;
+        font-weight: 600;
+        font-size: clamp(1.8rem, 8.6vw, 2.2rem);
+        line-height: 1.15;
+        color: #d23b55;
+        -webkit-text-stroke: 0.14em #ffffff;
+        paint-order: stroke fill;
+        filter: drop-shadow(0 3px 4px rgba(150, 40, 60, 0.3));
+    }
+
+    /* ── Marco infantil ─────────────────────────────────────────
+       Afuera: borde blanco grueso con un aro rojo y sombra.
+       Adentro: una línea de puntitos rosa (::before) y lunares suaves
+       sobre el crema.                                               */
+    .tarjeta {
+        position: relative;
+        padding: 0.4rem 1.2rem 2rem;
+        border-radius: 30px;
+        border: 5px solid #ffffff;
+        background-color: #fffaf0;
+        background-image:
+            radial-gradient(
+                circle,
+                rgba(232, 120, 140, 0.13) 2.5px,
+                transparent 3px
+            ),
+            linear-gradient(180deg, #fffdf6, #fff6e6);
+        background-size: 22px 22px, 100% 100%;
+        box-shadow:
+            0 0 0 3px #d8303b,
+            0 0 0 7px #ffffff,
+            0 12px 26px rgba(120, 40, 40, 0.25);
+    }
+    .tarjeta::before {
+        content: "";
+        position: absolute;
+        inset: 8px;
+        border-radius: 22px;
+        border: 2.5px dotted #e8788c;
+        pointer-events: none;
+    }
+
+    .banderines {
+        position: relative;
+        display: block;
+        width: calc(100% + 1.4rem);
+        height: auto;
+        margin: 0 -0.7rem;
+        filter: drop-shadow(0 2px 2px rgba(80, 40, 20, 0.2));
+    }
+
+    .logo {
+        position: relative;
+        display: block;
+        width: 100%;
+        height: auto;
+        margin: 0.1rem auto 0.6rem;
+        user-select: none;
+        -webkit-user-drag: none;
+        filter: drop-shadow(0 6px 8px rgba(120, 20, 20, 0.22));
+    }
+
+    /* ── Textos centrados ───────────────────────────────────── */
+    .direccion {
+        position: relative;
+        margin: 0;
+        font-family: "Cormorant Garamond", serif;
+        font-weight: 700;
+        font-size: clamp(1.15rem, 5.4vw, 1.35rem);
+        line-height: 1.3;
+        color: #4a2c14;
+    }
+
+    .puntos {
+        display: flex;
+        justify-content: center;
+        gap: 0.55rem;
+        margin: 1rem 0 0.8rem;
+    }
+    .puntos span {
+        width: 8px;
+        height: 8px;
+        border-radius: 50%;
+        background-image: linear-gradient(#d8303b, #d8303b);
+    }
+    .puntos span:nth-child(3n + 2) {
+        background-image: linear-gradient(#f4c534, #f4c534);
+    }
+    .puntos span:nth-child(3n + 3) {
+        background-image: linear-gradient(#3d73c9, #3d73c9);
+    }
+
+    .hora {
+        position: relative;
+        margin: 0;
+        font-family: "Cinzel", serif;
+        font-weight: 600;
+        font-size: clamp(1.15rem, 5.4vw, 1.35rem);
+        letter-spacing: 0.03em;
+        color: #a3121f;
+    }
+
+    .boton {
+        position: relative;
+        display: inline-block;
+        margin-top: 1.2rem;
+        padding: 0.75rem 1.8rem;
+        border-radius: 999px;
+        border: 3px solid #ffffff;
+        background-image: linear-gradient(180deg, #e0414a, #b3101d);
+        box-shadow:
+            0 0 0 2.5px #d8303b,
+            0 6px 12px rgba(120, 20, 20, 0.3);
+        font-family: "Cinzel", serif;
+        font-weight: 600;
+        font-size: clamp(0.95rem, 4.4vw, 1.1rem);
+        color: #ffffff;
+        text-decoration: none;
+        transition: transform 0.2s ease;
+    }
+    .boton:active {
+        transform: scale(0.95);
+    }
+
+    /* La imagen mira a la derecha: se da vuelta para mirar a la izquierda */
+    .ciervo {
+        position: absolute;
+        z-index: 2;
+        right: -1.8rem;
+        bottom: -2rem;
+        width: 4.6rem;
+        height: auto;
+        transform: scaleX(-1);
+        pointer-events: none;
+        user-select: none;
+        -webkit-user-drag: none;
+        filter: drop-shadow(0 5px 6px rgba(60, 40, 20, 0.25));
+    }
+</style>

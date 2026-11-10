@@ -1,0 +1,582 @@
+---
+// src/components/NombresFlores.astro
+// Primera sección: foto arriba, "Acompáñanos a celebrar", el nombre con
+// borde dorado y la edad dentro de la manzana. La música la arranca la
+// portada y la maneja BotonMusica.
+//
+// Imágenes:
+//   /imagenes/foto1.webp     foto de arriba
+//   /imagenes/manzana.webp   manzana con el número de la edad YA DIBUJADO. Si cambia la edad,
+//                            hay que cambiar la imagen.
+//   /imagenes/pajarito.webp  pajarito al lado del nombre
+// Letras (en /fonts/, no desde Google):
+//   great-vibes.woff2        nombre y "añitos"
+//   cinzel-600.woff2         "Cumple"
+//   dancing-script-600.woff2 "Acompáñanos a celebrar"
+
+// ── DATOS EDITABLES ───────────────────────────────────────────
+const nombre = "Sophia";
+const cumple = "Cumple";
+const edad = "5";
+const edadTexto = "añitos";
+const invitacion = "Acompáñanos a celebrar";
+// ──────────────────────────────────────────────────────────────
+---
+
+<section id="sobre-novios" class="seccion">
+    <img
+        src="/imagenes/foto1.webp"
+        alt=""
+        width="941"
+        height="855"
+        class="foto"
+        fetchpriority="high"
+    />
+
+    <div class="contenido">
+        <!-- Destellos dentro de la nube de luz -->
+        <div class="brillos" aria-hidden="true">
+            <span style="left:10%; top:14%;"></span>
+            <span style="left:88%; top:10%;"></span>
+            <span style="left:6%; top:44%;"></span>
+            <span style="left:92%; top:40%;"></span>
+            <span style="left:18%; top:70%;"></span>
+            <span style="left:82%; top:74%;"></span>
+        </div>
+
+        <p class="invitacion">{invitacion}</p>
+
+        <!-- Adorno: dos líneas doradas con una manzana al medio -->
+        <div class="adorno" aria-hidden="true">
+            <span class="linea"></span>
+            <svg viewBox="0 0 24 24" class="manzanita">
+                <path
+                    fill="#c0161f"
+                    d="M12 7.5c-1.6-1.3-5.8-1.6-6.9 2.3-1 3.6 1.3 9.6 4.3 10.6 1 .3 1.8-.2 2.6-.2s1.6.5 2.6.2c3-1 5.3-7 4.3-10.6C17.8 5.9 13.6 6.2 12 7.5z"
+                ></path>
+                <path
+                    fill="none"
+                    stroke="#6b3a1e"
+                    stroke-width="1.3"
+                    stroke-linecap="round"
+                    d="M12 7.6c0-1.6.4-3 1.4-4.2"></path>
+                <path
+                    fill="#4f8a2f"
+                    d="M12.6 5.6c1.2-2 3.4-2.6 5.2-2-1 1.9-3 2.8-5.2 2z"
+                ></path>
+                <path
+                    fill="#fff"
+                    opacity=".5"
+                    d="M7.6 10.4c.4-1.4 1.6-2 2.6-2-.9.6-1.6 1.6-1.8 3-.3.2-.9-.3-.8-1z"
+                ></path>
+            </svg>
+            <span class="linea"></span>
+        </div>
+
+        <h1 class="nombre">
+            <span class="nombre-caja">
+                <!-- Un pajarito a cada lado, los dos mirando al nombre -->
+                <img
+                    src="/imagenes/pajarito.webp"
+                    alt=""
+                    width="300"
+                    height="424"
+                    class="pajarito pajarito-izq"
+                    aria-hidden="true"
+                />
+                <span class="nombre-pila">{nombre}</span>
+                <img
+                    src="/imagenes/pajarito.webp"
+                    alt=""
+                    width="300"
+                    height="424"
+                    class="pajarito pajarito-der"
+                    aria-hidden="true"
+                />
+            </span>
+        </h1>
+
+        <!-- Arriba de la manzana: "Cumple" entre dos rulitos. Se lee
+             "Cumple [5 de la manzana] añitos" -->
+        <p class="cumple">
+            <svg class="rulo" viewBox="0 0 60 20" aria-hidden="true">
+                <path
+                    d="M58 10 H24 C18 10 14 4 9 5 C4 6 4 13 9 13 C12 13 13 10 11 9"
+                ></path>
+                <path d="M30 10 C34 5 40 5 42 8"></path>
+            </svg>
+            <span>{cumple}</span>
+            <svg class="rulo rulo-der" viewBox="0 0 60 20" aria-hidden="true">
+                <path
+                    d="M58 10 H24 C18 10 14 4 9 5 C4 6 4 13 9 13 C12 13 13 10 11 9"
+                ></path>
+                <path d="M30 10 C34 5 40 5 42 8"></path>
+            </svg>
+        </p>
+
+        <!-- Edad: la manzana trae el número; abajo la cinta "añitos" -->
+        <div class="edad">
+            <svg class="ramas" viewBox="0 0 300 120" aria-hidden="true">
+                <g
+                    fill="none"
+                    stroke="url(#nf-oro)"
+                    stroke-width="2.4"
+                    stroke-linecap="round"
+                >
+                    <path d="M96 60 C70 60 56 46 40 48 C26 50 22 64 32 70 C40 74 48 66 42 60"></path>
+                    <path d="M70 58 C60 42 46 36 34 38"></path>
+                    <path d="M62 62 C54 76 40 84 26 82"></path>
+                    <path d="M204 60 C230 60 244 46 260 48 C274 50 278 64 268 70 C260 74 252 66 258 60"></path>
+                    <path d="M230 58 C240 42 254 36 266 38"></path>
+                    <path d="M238 62 C246 76 260 84 274 82"></path>
+                </g>
+                <defs>
+                    <linearGradient id="nf-oro" x1="0" y1="0" x2="0" y2="1">
+                        <stop offset="0" stop-color="#ffe7a3"></stop>
+                        <stop offset=".5" stop-color="#e2b04a"></stop>
+                        <stop offset="1" stop-color="#a8741f"></stop>
+                    </linearGradient>
+                </defs>
+            </svg>
+            <img
+                src="/imagenes/manzana.webp"
+                alt={`${edad} ${edadTexto}`}
+                width="520"
+                height="592"
+                class="manzana"
+            />
+            <div class="cinta" aria-hidden="true">
+                <svg viewBox="0 0 240 60" preserveAspectRatio="none">
+                    <defs>
+                        <linearGradient id="nf-rojo" x1="0" y1="0" x2="0" y2="1">
+                            <stop offset="0" stop-color="#d8303b"></stop>
+                            <stop offset="1" stop-color="#8a0a14"></stop>
+                        </linearGradient>
+                    </defs>
+                    <!-- Puntas de la cinta, por detrás -->
+                    <path
+                        d="M2 20 H40 V54 H2 L14 37 Z"
+                        fill="#7a0911"
+                        stroke="#e2b04a"
+                        stroke-width="1.6"></path>
+                    <path
+                        d="M238 20 H200 V54 H238 L226 37 Z"
+                        fill="#7a0911"
+                        stroke="#e2b04a"
+                        stroke-width="1.6"></path>
+                    <!-- Cinta principal, apenas curvada -->
+                    <path
+                        d="M24 10 Q120 0 216 10 V46 Q120 36 24 46 Z"
+                        fill="url(#nf-rojo)"
+                        stroke="#e2b04a"
+                        stroke-width="2"></path>
+                </svg>
+                <span class="edad-txt">{edadTexto}</span>
+            </div>
+        </div>
+    </div>
+</section>
+
+<style>
+    /* Letras del nombre servidas desde el propio sitio (no desde Google) */
+    @font-face {
+        font-family: "Great Vibes Sitio";
+        src: url("/fonts/great-vibes.woff2") format("woff2");
+        font-weight: 400;
+        font-display: swap;
+    }
+    @font-face {
+        font-family: "Dancing Script Sitio";
+        src: url("/fonts/dancing-script-600.woff2") format("woff2");
+        font-weight: 600;
+        font-display: swap;
+    }
+    @font-face {
+        font-family: "Cinzel";
+        src: url("/fonts/cinzel-600.woff2") format("woff2");
+        font-weight: 600;
+        font-display: swap;
+    }
+
+    /* Sin fondo propio: se ve el fondo principal del layout */
+    .seccion {
+        position: relative;
+        width: 100%;
+        overflow: hidden;
+        color: #4a2c14;
+    }
+
+    /* ── Foto ───────────────────────────────────────────────── */
+    .foto {
+        display: block;
+        width: 100%;
+        height: auto;
+        user-select: none;
+        -webkit-user-drag: none;
+        /* La foto se difumina suave abajo y se funde con la nube blanca */
+        -webkit-mask-image: linear-gradient(
+            180deg,
+            #000 62%,
+            rgba(0, 0, 0, 0.6) 80%,
+            transparent 100%
+        );
+        mask-image: linear-gradient(
+            180deg,
+            #000 62%,
+            rgba(0, 0, 0, 0.6) 80%,
+            transparent 100%
+        );
+    }
+
+    /* ── Textos ─────────────────────────────────────────────── */
+    .contenido {
+        position: relative;
+        z-index: 1;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        margin-top: -1.2rem;
+        padding: 0 6% 3.2rem;
+        text-align: center;
+    }
+
+    /* La nube de luz blanca detrás de los textos está en el layout,
+       junto al fondo principal, y se ve en todas las secciones. */
+
+    .invitacion {
+        margin: 0;
+        font-family: "Dancing Script Sitio", "Great Vibes", cursive;
+        font-weight: 600;
+        font-size: clamp(1.6rem, 7.6vw, 2rem);
+        line-height: 1.2;
+        color: #6b3a14;
+        text-shadow: 0 1px 0 rgba(255, 255, 255, 0.8);
+    }
+
+    .adorno {
+        display: flex;
+        align-items: center;
+        gap: 0.7rem;
+        width: min(92%, 340px);
+        margin: 0.5rem 0 0.4rem;
+    }
+    .adorno .linea {
+        flex: 1;
+        height: 1.5px;
+        background-image: linear-gradient(
+            90deg,
+            rgba(201, 154, 74, 0),
+            #d4a650
+        );
+    }
+    .adorno .linea:last-child {
+        background-image: linear-gradient(
+            90deg,
+            #d4a650,
+            rgba(201, 154, 74, 0)
+        );
+    }
+    .manzanita {
+        flex: 0 0 auto;
+        width: 30px;
+        height: 30px;
+        filter: drop-shadow(0 2px 3px rgba(120, 20, 20, 0.3));
+    }
+
+    /*
+       Nombre: rojo manzana con brillo arriba y borde dorado. El borde sale
+       de varias sombras finas en oro, así funciona aunque el rojo sea un
+       degradado recortado a las letras.
+    */
+    .nombre {
+        margin: 0;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        font-weight: 400;
+        line-height: 1.1;
+    }
+    /*
+       Great Vibes es fina de por sí: el grosor sale de un trazo del mismo
+       rojo alrededor de cada letra. Encima, el borde dorado y la sombra.
+    */
+    .nombre-pila {
+        padding: 0 0.2em;
+        font-family: "Great Vibes Sitio", "Great Vibes", cursive;
+        font-size: clamp(3.4rem, 16vw, 4.6rem);
+        line-height: 1.15;
+        color: #a3121f;
+        -webkit-text-stroke: 1.6px #a3121f;
+        filter: drop-shadow(1px 0 0 #f1c96a) drop-shadow(-1px 0 0 #f1c96a)
+            drop-shadow(0 1px 0 #f1c96a) drop-shadow(0 -1px 0 #f1c96a)
+            drop-shadow(0 3px 2px rgba(150, 95, 20, 0.55))
+            drop-shadow(0 6px 10px rgba(120, 20, 20, 0.25));
+    }
+
+    .nombre-caja {
+        position: relative;
+        display: inline-block;
+    }
+
+    /*
+       Pajaritos a los dos lados del nombre, separados de las letras y
+       aleteando suave. La imagen mira a la izquierda: el de la derecha
+       queda tal cual y el de la izquierda se da vuelta, así los dos
+       miran hacia el nombre.
+    */
+    .pajarito {
+        position: absolute;
+        top: -30%;
+        width: clamp(3.4rem, 17vw, 4.6rem);
+        height: auto;
+        pointer-events: none;
+        user-select: none;
+        -webkit-user-drag: none;
+        filter: drop-shadow(0 4px 6px rgba(30, 60, 110, 0.3));
+        animation: revolotear 3.2s ease-in-out infinite;
+        /*
+           La entrada desliza con "translate" (y no con transform) para
+           no pelearse con el aleteo, que usa transform.
+        */
+        translate: var(--entra-x, 0px) 0;
+    }
+    .pajarito-der {
+        left: calc(100% + 1.4rem);
+    }
+    .pajarito-izq {
+        right: calc(100% + 1.4rem);
+        animation-name: revolotearIzq;
+        animation-delay: -1.6s;
+    }
+    @keyframes revolotear {
+        0%,
+        100% {
+            transform: translateY(0) rotate(-4deg);
+        }
+        50% {
+            transform: translateY(-8px) rotate(3deg);
+        }
+    }
+    @keyframes revolotearIzq {
+        0%,
+        100% {
+            transform: scaleX(-1) translateY(0) rotate(-4deg);
+        }
+        50% {
+            transform: scaleX(-1) translateY(-8px) rotate(3deg);
+        }
+    }
+
+    /* "Cumple", arriba de la manzana */
+    .cumple {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        margin: 1rem 0 0;
+        font-family: "Cinzel", serif;
+        font-weight: 600;
+        font-size: clamp(1.05rem, 5.4vw, 1.35rem);
+        letter-spacing: 0.08em;
+        color: #6b3a14;
+    }
+    .rulo {
+        width: 2.2rem;
+        height: 0.8rem;
+        flex: 0 0 auto;
+        fill: none;
+        stroke: #d4a650;
+        stroke-width: 2;
+        stroke-linecap: round;
+    }
+    .rulo-der {
+        transform: scaleX(-1);
+    }
+
+    /* ── Edad: manzana con ramas doradas a los costados ────── */
+    .edad {
+        position: relative;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        width: 100%;
+        max-width: 340px;
+        margin-top: 1.2rem;
+    }
+    .ramas {
+        position: absolute;
+        left: 0;
+        top: 34%;
+        width: 100%;
+        height: auto;
+        pointer-events: none;
+    }
+    .manzana {
+        position: relative;
+        display: block;
+        width: 46%;
+        height: auto;
+        user-select: none;
+        -webkit-user-drag: none;
+        filter: drop-shadow(0 8px 14px rgba(120, 20, 20, 0.3));
+    }
+    /* Cinta roja con borde dorado, montada apenas sobre la manzana */
+    .cinta {
+        position: relative;
+        display: grid;
+        place-items: center;
+        width: 62%;
+        aspect-ratio: 240 / 60;
+        margin-top: -1.4rem;
+        filter: drop-shadow(0 4px 6px rgba(120, 20, 20, 0.3));
+    }
+    .cinta svg {
+        position: absolute;
+        inset: 0;
+        width: 100%;
+        height: 100%;
+    }
+    .edad-txt {
+        position: relative;
+        margin-top: -0.25em;
+        font-family: "Great Vibes Sitio", "Great Vibes", cursive;
+        font-size: clamp(1.9rem, 9vw, 2.4rem);
+        line-height: 1;
+        background-image: linear-gradient(
+            180deg,
+            #fff3c8 0%,
+            #f1c96a 55%,
+            #d29a3a 100%
+        );
+        -webkit-background-clip: text;
+        background-clip: text;
+        color: transparent;
+        filter: drop-shadow(0 1px 0 #5c050c);
+    }
+
+    .brillos {
+        position: absolute;
+        inset: 0;
+        pointer-events: none;
+    }
+    .brillos span {
+        position: absolute;
+        width: 14px;
+        height: 14px;
+        background-image: linear-gradient(#ffffff, #ffe9b0);
+        filter: drop-shadow(0 0 4px rgba(255, 220, 140, 0.9));
+        clip-path: polygon(
+            50% 0,
+            60% 40%,
+            100% 50%,
+            60% 60%,
+            50% 100%,
+            40% 60%,
+            0 50%,
+            40% 40%
+        );
+        animation: titilar 2.8s ease-in-out infinite;
+    }
+    .brillos span:nth-child(2n) {
+        animation-delay: -1.4s;
+    }
+    .brillos span:nth-child(3n) {
+        width: 10px;
+        height: 10px;
+    }
+    @keyframes titilar {
+        0%,
+        100% {
+            opacity: 0.3;
+            transform: scale(0.7);
+        }
+        50% {
+            opacity: 1;
+            transform: scale(1.1);
+        }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+        .brillos span,
+        .pajarito {
+            animation: none;
+        }
+        .pajarito-izq {
+            transform: scaleX(-1);
+        }
+    }
+</style>
+
+<script>
+    /*
+       Entrada de la sección, elegante y por partes: la foto aparece con
+       un zoom suave, los textos llegan alternando desde la izquierda y la
+       derecha, los pajaritos entran volando cada uno desde su lado y la
+       manzana aparece con un pequeño rebote.
+
+       Con portada, todo espera escondido detrás del sobre y arranca
+       recién cuando se abre (evento "portada-abierta"). Sin portada,
+       arranca al cargar.
+    */
+    import { gsap } from "gsap";
+
+    document.addEventListener("DOMContentLoaded", () => {
+        const seccion = document.getElementById("sobre-novios");
+        if (!seccion) return;
+
+        const menosMovimiento = window.matchMedia(
+            "(prefers-reduced-motion: reduce)",
+        ).matches;
+        if (menosMovimiento) return;
+
+        const $ = (sel: string) => seccion.querySelector<HTMLElement>(sel);
+        const foto = $(".foto");
+        const invitacion = $(".invitacion");
+        const adorno = $(".adorno");
+        const nombre = $(".nombre-pila");
+        const pajIzq = $(".pajarito-izq");
+        const pajDer = $(".pajarito-der");
+        const cumple = $(".cumple");
+        const manzana = $(".manzana");
+        const cinta = $(".cinta");
+        const brillos = $(".brillos");
+
+        // Estado inicial: todo escondido, cada cosa corrida hacia su lado
+        gsap.set(foto, { autoAlpha: 0, scale: 1.08 });
+        gsap.set(invitacion, { autoAlpha: 0, x: -36 });
+        gsap.set(adorno, { autoAlpha: 0, scaleX: 0 });
+        gsap.set(nombre, { autoAlpha: 0, x: 36, scale: 0.96 });
+        gsap.set(pajIzq, { autoAlpha: 0, "--entra-x": "-70px" });
+        gsap.set(pajDer, { autoAlpha: 0, "--entra-x": "70px" });
+        gsap.set(cumple, { autoAlpha: 0, x: -36 });
+        gsap.set(manzana, { autoAlpha: 0, scale: 0.82, rotate: -6 });
+        gsap.set(cinta, { autoAlpha: 0, y: 24 });
+        gsap.set(brillos, { autoAlpha: 0 });
+
+        let arranco = false;
+        const arrancar = () => {
+            if (arranco) return;
+            arranco = true;
+
+            // Todo arranca al mismo tiempo (posición 0), sin escalonar
+            const tl = gsap.timeline({
+                defaults: { ease: "power2.out", duration: 1.6 },
+            });
+            tl.to(foto, { autoAlpha: 1, scale: 1 }, 0)
+                .to(invitacion, { autoAlpha: 1, x: 0 }, 0)
+                .to(adorno, { autoAlpha: 1, scaleX: 1 }, 0)
+                .to(nombre, { autoAlpha: 1, x: 0, scale: 1 }, 0)
+                .to([pajIzq, pajDer], { autoAlpha: 1, "--entra-x": "0px" }, 0)
+                .to(cumple, { autoAlpha: 1, x: 0 }, 0)
+                .to(manzana, { autoAlpha: 1, scale: 1, rotate: 0 }, 0)
+                .to(cinta, { autoAlpha: 1, y: 0 }, 0)
+                .to(brillos, { autoAlpha: 1 }, 0);
+        };
+
+        const hayPortada = !!document.getElementById("portada-section");
+        if ((window as any).portadaAbierta || !hayPortada) {
+            arrancar();
+        } else {
+            window.addEventListener("portada-abierta", arrancar, { once: true });
+        }
+    });
+</script>
